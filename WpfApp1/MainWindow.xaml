@@ -7,6 +7,7 @@
         Topmost="True"
         KeyDown="Window_KeyDown"
         Deactivated="Window_Deactivated"
+        Closing="Window_Closing"
         PreviewLostKeyboardFocus="Window_PreviewLostKeyboardFocus"
         mc:Ignorable="d" Height="338.114" Width="415.164" AllowsTransparency="True" WindowStyle="None" Opacity="100" Background="Transparent">
     <Grid Margin="0,0,-8,-21" Opacity="100">

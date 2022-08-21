@@ -43,6 +43,8 @@ namespace WpfApp1
         private const UInt32 SWP_NOMOVE = 0x0002;
         private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
         Recognizer recognizer = null;
+        Thread t_recognizer = null;
+        bool destroy_thread;
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLong", CharSet = CharSet.Auto)]
         public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
@@ -72,8 +74,10 @@ namespace WpfApp1
 
             //Parameters for recognition
             killfeed = new Rectangle(0, 360, 400, 410);
+
+            destroy_thread = false;
             recognizer = new Recognizer(Properties.Settings.Default.path_to_tesseract);
-            Thread t_recognizer = new Thread(ThreadStart);
+            t_recognizer = new Thread(ThreadStart);
             t_recognizer.Start();
 
         }
@@ -101,7 +105,7 @@ namespace WpfApp1
         {
             CountdownCallback timer_cb;
             timer_cb = StartCountDown;
-            while (true)
+            while (!destroy_thread)
             {
                 //Screenshot and crop out killfeed
                 bm = new Bitmap(killfeed.Width, killfeed.Height, PixelFormat.Format32bppArgb);
@@ -215,6 +219,12 @@ namespace WpfApp1
         {
             //var window = (Window)sender;
             this.Topmost = true;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            destroy_thread = true;
+            t_recognizer.Join();
         }
     }
 }
