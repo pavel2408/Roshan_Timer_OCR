@@ -32,6 +32,11 @@ namespace WpfApp1
         private bool RoshIsDead = false;
         private IntPtr Handle;
         private DispatcherTimer timer;
+        Rectangle killfeed;
+        Bitmap bm;
+        Graphics g;
+        bool results;
+        int killfeed_fadeaway_timeout = 10000;
 
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         private const UInt32 SWP_NOSIZE = 0x0001;
@@ -41,6 +46,9 @@ namespace WpfApp1
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLong", CharSet = CharSet.Auto)]
         public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        delegate void CountdownCallback();
+
         public MainWindow()
         {
 
@@ -50,43 +58,57 @@ namespace WpfApp1
             Left = rightmost.WorkingArea.Right - Width;
             Top = 0;
             Topmost = true;
+
+            //Hook to the dota process
             Handle = new WindowInteropHelper(this).Handle;
-            var notepad = Process.GetProcessesByName("dota2").FirstOrDefault();
-            Console.WriteLine(notepad != null);
-            if (notepad != null)
+            var dota_process = Process.GetProcessesByName("dota2").FirstOrDefault();
+            Console.WriteLine(dota_process != null);
+            if (dota_process != null)
             {
-                var owner = notepad.MainWindowHandle;
+                var owner = dota_process.MainWindowHandle;
                 var owned = Handle;
                 _ = SetWindowLong(owned, -8 /*GWL_HWNDPARENT*/, owner);
             }
+
+            //Parameters for recognition
+            killfeed = new Rectangle(0, 360, 400, 410);
             recognizer = new Recognizer(Properties.Settings.Default.path_to_tesseract);
             Thread t_recognizer = new Thread(ThreadStart);
             t_recognizer.Start();
-            //while (true)
-            //{
-            //    GetScreenshot();
-            //    Thread.Sleep(2000);
-            //}
-            //KeyboardListener KListener = new KeyboardListener();
-
-            //KListener.KeyDown += new RawKeyEventHandler(KListener_KeyDown);
 
         }
         private void StartCountDown()
         {
-
+            if (roshanTimer.TotalMinutes == 8 || roshanTimer.TotalMinutes < 1)
+            {
+                RoshIsDead = true;
+                roshanTimer = new TimeSpan(0, 8, 0);
+                AegisTimer = new TimeSpan(0, 5, 0);
+                additionalTimer = new TimeSpan(0, 3, 0);
+                if (timer != null && timer.IsEnabled)
+                    timer.Stop();
+                rosh_state.Content = "Roshan is dead";
+                rosh_state.Foreground = System.Windows.Media.Brushes.Red;
+                timer = new DispatcherTimer();
+                timer.Tick += new EventHandler(timer_Tick);
+                timer.Interval = second;
+                timer.Start();
+                rosh_state.Visibility = Visibility.Visible;
+            }
         }
+
         private void ThreadStart()
         {
+            CountdownCallback timer_cb;
+            timer_cb = StartCountDown;
             while (true)
             {
-                Rectangle rect = new Rectangle(0, 360, 400, 410);
-                Bitmap bm = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
-                //Bitmap bm = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-                Graphics g = Graphics.FromImage(bm);
-                g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bm.Size, CopyPixelOperation.SourceCopy);
-                bm.Save("test.jpg", ImageFormat.Jpeg);
-                bool results = recognizer.StartRecognition(bm);
+                //Screenshot and crop out killfeed
+                bm = new Bitmap(killfeed.Width, killfeed.Height, PixelFormat.Format32bppArgb);
+                g = Graphics.FromImage(bm);
+                g.CopyFromScreen(killfeed.Left, killfeed.Top, 0, 0, bm.Size, CopyPixelOperation.SourceCopy);
+                //bm.Save("test.jpg", ImageFormat.Jpeg);
+                results = recognizer.StartRecognition(bm);
                 if (results)
                 {
                     Console.WriteLine("Roshan dead");
@@ -94,22 +116,7 @@ namespace WpfApp1
                     //{
                     this.Dispatcher.Invoke(() =>
                     {
-                        if (roshanTimer.TotalMinutes==8 || roshanTimer.TotalMinutes < 1)
-                        {
-                            RoshIsDead = true;
-                            roshanTimer = new TimeSpan(0, 8, 0);
-                            AegisTimer = new TimeSpan(0, 5, 0);
-                            additionalTimer = new TimeSpan(0, 3, 0);
-                            if (timer != null && timer.IsEnabled)
-                                timer.Stop();
-                            rosh_state.Content = "Roshan is dead";
-                            rosh_state.Foreground = System.Windows.Media.Brushes.Red;
-                            timer = new DispatcherTimer();
-                            timer.Tick += new EventHandler(timer_Tick);
-                            timer.Interval = second;
-                            timer.Start();
-                            rosh_state.Visibility = Visibility.Visible;
-                        }
+                        timer_cb();
                     });
                     //}
                     /*else if (RoshIsDead)
@@ -124,13 +131,13 @@ namespace WpfApp1
                             rosh_state.Visibility = Visibility.Hidden;
                         });
                     }*/
-                    Thread.Sleep(10000);
+                    Thread.Sleep(killfeed_fadeaway_timeout);
                 }
                 else
                 {
                     Console.WriteLine("Didnt find roshan");
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
             }
         }
 
@@ -194,11 +201,11 @@ namespace WpfApp1
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            var notepad = Process.GetProcessesByName("dota2").FirstOrDefault();
-            Console.WriteLine(notepad != null);
-            if (notepad != null)
+            var dota_process = Process.GetProcessesByName("dota2").FirstOrDefault();
+            Console.WriteLine(dota_process != null);
+            if (dota_process != null)
             {
-                var owner = notepad.MainWindowHandle;
+                var owner = dota_process.MainWindowHandle;
                 var owned = this.Handle;
                 var i = SetWindowLong(owned, -8 /*GWL_HWNDPARENT*/, owner);
             }
