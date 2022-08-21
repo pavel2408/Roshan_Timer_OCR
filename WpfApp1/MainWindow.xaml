@@ -1,0 +1,19 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        Topmost="True"
+        KeyDown="Window_KeyDown"
+        Deactivated="Window_Deactivated"
+        PreviewLostKeyboardFocus="Window_PreviewLostKeyboardFocus"
+        mc:Ignorable="d" Height="338.114" Width="415.164" AllowsTransparency="True" WindowStyle="None" Opacity="100" Background="Transparent">
+    <Grid Margin="0,0,-8,-21" Opacity="100">
+        <Label x:Name="aegis_timer" Content="Aegis time:" HorizontalAlignment="Left" Margin="161,52,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="Auto" Height="37" Background="Transparent" Foreground="LightGreen"/>
+        <Label x:Name="rosh_timer" Content="Roshan time:" HorizontalAlignment="Left" Margin="161,108,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="Auto" Height="37" Background="Transparent" Foreground="LightGreen"/>
+        <Label x:Name="add_timer" Content="Additional time:" HorizontalAlignment="Left" Margin="161,150,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="Auto" Height="37" Background="Transparent" Foreground="LightGreen"/>
+        <Label x:Name="rosh_state" Content="Roshan is alive" HorizontalAlignment="Left" Margin="161,192,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="Auto" Height="37" Background="Transparent" Foreground="LightGreen"/>
+
+    </Grid>
+</Window>
