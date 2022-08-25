@@ -212,7 +212,10 @@ namespace WpfApp1
                 RoshIsDead = false;
                 turbo_flag.Visibility = Visibility.Visible;
                 in_turbo = true;
-                timer.Stop();
+                if (timer != null)
+                {
+                    timer.Stop();
+                }
                 roshanTimer = new TimeSpan(0, 5, 0);
                 AegisTimer = new TimeSpan(0, 5, 0);
                 additionalTimer = new TimeSpan(0, 0, 0);
@@ -223,11 +226,15 @@ namespace WpfApp1
                 RoshIsDead = false;
                 in_turbo = false;
                 RoshIsDead = false;
-                timer.Stop();
+                if (timer != null)
+                {
+                    timer.Stop();
+                }
                 roshanTimer = new TimeSpan(0, 8, 0);
                 AegisTimer = new TimeSpan(0, 5, 0);
                 additionalTimer = new TimeSpan(0, 3, 0);
                 rosh_state.Visibility = Visibility.Hidden;
+                turbo_flag.Visibility = Visibility.Hidden;
             }
 
         }
