@@ -36,6 +36,7 @@ namespace WpfApp1
         Bitmap bm;
         Graphics g;
         bool results;
+        bool in_turbo;
         int killfeed_fadeaway_timeout = 10000;
 
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
@@ -56,6 +57,7 @@ namespace WpfApp1
 
             InitializeComponent();
             rosh_state.Visibility=Visibility.Hidden;
+            turbo_flag.Visibility = Visibility.Hidden;
             Screen rightmost = Screen.PrimaryScreen;
             Left = rightmost.WorkingArea.Right - Width;
             Top = 0;
@@ -75,6 +77,7 @@ namespace WpfApp1
             //Parameters for recognition
             killfeed = new Rectangle(0, 360, 400, 410);
 
+            in_turbo = false;
             destroy_thread = false;
             recognizer = new Recognizer(Properties.Settings.Default.path_to_tesseract);
             t_recognizer = new Thread(ThreadStart);
@@ -197,8 +200,34 @@ namespace WpfApp1
             }
             if(e.Key==Key.F3)
             {
-                AegisTimer = new TimeSpan(0, 0, 0);
-                aegis_timer.Content = "Aegis time:";
+                RoshIsDead = false;
+                timer.Stop();
+                roshanTimer = new TimeSpan(0, 8, 0);
+                AegisTimer = new TimeSpan(0, 5, 0);
+                additionalTimer = new TimeSpan(0, 3, 0);
+                rosh_state.Visibility = Visibility.Hidden;
+            }
+            if(e.Key==Key.F2 && !in_turbo)
+            {
+                RoshIsDead = false;
+                turbo_flag.Visibility = Visibility.Visible;
+                in_turbo = true;
+                timer.Stop();
+                roshanTimer = new TimeSpan(0, 5, 0);
+                AegisTimer = new TimeSpan(0, 5, 0);
+                additionalTimer = new TimeSpan(0, 0, 0);
+                rosh_state.Visibility = Visibility.Hidden;
+            }
+            else if (e.Key == Key.F2 && in_turbo)
+            {
+                RoshIsDead = false;
+                in_turbo = false;
+                RoshIsDead = false;
+                timer.Stop();
+                roshanTimer = new TimeSpan(0, 8, 0);
+                AegisTimer = new TimeSpan(0, 5, 0);
+                additionalTimer = new TimeSpan(0, 3, 0);
+                rosh_state.Visibility = Visibility.Hidden;
             }
 
         }

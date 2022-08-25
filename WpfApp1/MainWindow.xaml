@@ -15,6 +15,7 @@
         <Label x:Name="rosh_timer" Content="Roshan time:" HorizontalAlignment="Left" Margin="161,108,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="Auto" Height="37" Background="Transparent" Foreground="LightGreen"/>
         <Label x:Name="add_timer" Content="Additional time:" HorizontalAlignment="Left" Margin="161,150,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="Auto" Height="37" Background="Transparent" Foreground="LightGreen"/>
         <Label x:Name="rosh_state" Content="Roshan is alive" HorizontalAlignment="Left" Margin="161,192,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="Auto" Height="37" Background="Transparent" Foreground="LightGreen"/>
+        <Label x:Name="turbo_flag" Content="In turbo" HorizontalAlignment="Left" Margin="161,229,0,0" VerticalAlignment="Top" FontFamily="Segoe UI Black" FontSize="20" Width="127" Height="37" Background="Transparent" Foreground="LightGreen"/>
 
     </Grid>
 </Window>
